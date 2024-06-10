@@ -3,7 +3,7 @@ from typing import Tuple
 
 
 class SshExecuter:
-    PASSWORD_FILE_PATH = "./ssh_utils/password"
+    PASSWORD_FILE_PATH = "./sshpass_utils/password"
 
     def __init__(self, *, host, user, password=None, pass_from_file=False, protocol_scp=False):
         self.__password, self.__option = self.__check_pass(password, pass_from_file)

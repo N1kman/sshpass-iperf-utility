@@ -1,10 +1,10 @@
-from ssh_utils import SshExecuter
+from sshpass_utils import SshExecuter
 import threading
 import subprocess
 import time
 
 
-class IperfExecuter():
+class IperfExecuter:
 
     COMMAND_IPERF = 'iperf3 -s -1'
 
