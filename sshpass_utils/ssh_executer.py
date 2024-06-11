@@ -24,6 +24,12 @@ class SshExecuter:
         stdout, stderr = self.__process.communicate()
         return stdout.decode('UTF-8'), stderr.decode('UTF-8'), self.__process.returncode
 
+    def stop_process(self, command):
+        if self.__process:
+            pid, _, code = self.execute_command(f"\"pgrep -f '{command}'\"")
+            if not code:
+                self.execute_command(f"kill {pid}")
+
     def is_running(self) -> bool:
         if self.__process is not None:
             if self.__process.poll() is None:

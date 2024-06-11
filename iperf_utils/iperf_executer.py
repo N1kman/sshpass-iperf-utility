@@ -11,28 +11,30 @@ class IperfExecuter:
     CHECKING_TIME_SEC = 1
     CHECKING_TIMES = 10
 
-    def __init__(self, *, user, host, password=None, pass_from_file=False):
-        self.sshExecuter = SshExecuter(user=user, host=host, password=password, pass_from_file=pass_from_file)
+    def __init__(self, *, user1, host1, user2, host2, password1=None, pass_from_file1=False, password2=None, pass_from_file2=False):
+        self.ssh_executer_1 = SshExecuter(user=user1, host=host1, password=password1, pass_from_file=pass_from_file1)
+        self.ssh_executer_2 = SshExecuter(user=user2, host=host2, password=password2, pass_from_file=pass_from_file2)
+        self.server_ip = host1
 
-    def execute_analyze(self, server_ip):
-        process_thread = threading.Thread(target=self.sshExecuter.execute_command, args=(self.COMMAND_IPERF,))
+    def execute_analyze(self):
+        process_thread = threading.Thread(target=self.ssh_executer_1.execute_command, args=(self.COMMAND_IPERF,))
         process_thread.start()
 
         self.__checking_is_running(False)
 
-        process = subprocess.Popen(f'iperf3 -c {server_ip} -J', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = process.communicate()
+        stdout, error, return_code = self.ssh_executer_2.execute_command(f'iperf3 -c {self.server_ip} -J')
 
-        if process.returncode:
-            raise Exception(f'No connection to {server_ip}')
+        if return_code:
+            self.ssh_executer_1.stop_process(self.COMMAND_IPERF)
+            raise Exception(f'No connection to {self.server_ip}.')
 
         self.__checking_is_running()
 
-        return stdout.decode('utf-8')
+        return stdout
 
     def __checking_is_running(self, running=True):
         times = 0
-        while self.sshExecuter.is_running() == running:
+        while self.ssh_executer_1.is_running() == running:
             time.sleep(self.CHECKING_TIME_SEC)
             times += 1
             if times > self.CHECKING_TIMES:
