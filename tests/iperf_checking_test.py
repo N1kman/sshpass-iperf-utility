@@ -15,12 +15,17 @@ class IperfUtilityTest(TestCase):
 
     @patch('argparse.ArgumentParser.parse_args')
     def test_get_args(self, mock_args):
-        mock_args.return_value = Mock(host=self.HOST, user=self.USER, password=self.PASSWORD, file=False)
+        mock_args.return_value = Mock(host1=self.HOST, user1=self.USER, password1=self.PASSWORD, file1=False,
+                                      host2=self.HOST, user2=self.USER, password2=self.PASSWORD, file2=False)
         args = get_args()
-        self.assertEqual(args.host, self.HOST)
-        self.assertEqual(args.user, self.USER)
-        self.assertFalse(args.file)
-        self.assertEqual(args.password, self.PASSWORD)
+        self.assertEqual(args.host1, self.HOST)
+        self.assertEqual(args.user1, self.USER)
+        self.assertFalse(args.file1)
+        self.assertEqual(args.password1, self.PASSWORD)
+        self.assertEqual(args.host2, self.HOST)
+        self.assertEqual(args.user2, self.USER)
+        self.assertFalse(args.file2)
+        self.assertEqual(args.password2, self.PASSWORD)
 
     @patch('iperf_checking.get_args')
     @patch('iperf_utils.IperfExecuter.execute_analyze')
